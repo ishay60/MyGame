@@ -1,0 +1,86 @@
+/* src/Game.css */
+@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+
+body {
+  background-color: #000;
+  color: #fff;
+  font-family: "Press Start 2P", cursive;
+}
+
+.game {
+  text-align: center;
+  padding: 2rem;
+  background: #222;
+  border: 4px solid #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px #fff;
+  max-width: 600px;
+  margin: 2rem auto;
+  animation: slideIn 1s ease-in-out;
+}
+
+h1 {
+  font-size: 2rem;
+  color: #fff;
+  margin-bottom: 1.5rem;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.choices {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.choice-button {
+  border-radius: 10px;
+  border: 2px solid #fff;
+  padding: 1rem;
+  font-size: 1rem;
+  font-weight: 500;
+  background-color: #444;
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.25s, box-shadow 0.25s;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.choice-button:hover {
+  border-color: #ff0;
+  transform: scale(1.1);
+  box-shadow: 0 0 10px #ff0;
+}
+
+.results {
+  font-size: 1rem;
+  color: #fff;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.results p {
+  margin: 0.5rem 0;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
