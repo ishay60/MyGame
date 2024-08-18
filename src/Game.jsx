@@ -12,10 +12,10 @@ function Game() {
   const [opponentChoice, setOpponentChoice] = useState(null);
   const [result, setResult] = useState("");
 
-  const clickSound = new Audio("/assets/sounds/click.mp3");
-  const winSound = new Audio("/assets/sounds/win.mp3");
+  const clickSound = new Audio("/assets/sounds/click.wav");
+  const winSound = new Audio("/assets/sounds/win.wav");
   const loseSound = new Audio("/assets/sounds/lose.mp3");
-  const tieSound = new Audio("/assets/sounds/tie.mp3");
+  const tieSound = new Audio("/assets/sounds/tie.wav");
 
   const play = (choice) => {
     clickSound.play();
@@ -44,6 +44,7 @@ function Game() {
 
   return (
     <div className="game">
+      <div className="result-message">{result}</div>
       <h1>Rock Paper Scissors</h1>
       <div className="choices">
         {choices.map((choice) => (
