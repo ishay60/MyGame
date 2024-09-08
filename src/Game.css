@@ -1,22 +1,30 @@
-/* src/Game.css */
-@import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
-
-body {
-  background-color: #000;
-  color: #fff;
-  font-family: "Press Start 2P", cursive;
+.game-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100vh;
+  padding: 2rem;
 }
 
-.game {
+.player-info, .opponent-info {
+  width: 45%;
   text-align: center;
-  padding: 2rem;
-  background: #222;
-  border: 4px solid #fff;
+  background: #fff;
   border-radius: 10px;
-  box-shadow: 0 0 10px #fff;
-  max-width: 600px;
-  margin: 2rem auto;
-  animation: slideIn 1s ease-in-out;
+  padding: 1rem;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.1);
+  transform: rotateY(5deg); /* Slight 3D effect */
+  transition: transform 0.3s ease;
+}
+
+.player-info:hover, .opponent-info:hover {
+  transform: rotateY(0deg); /* Reset rotation on hover */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2), 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.opponent-info {
+  text-align: right;
+  background-color: burlywood;
 }
 
 h1 {
@@ -81,6 +89,7 @@ h1 {
   font-size: 2rem;
   font-family: "Press Start 2P", cursive;
   animation: fadeIn 1s ease-in-out;
+  z-index: 1000; /* Ensure it is on top */
 }
 
 @keyframes fadeIn {

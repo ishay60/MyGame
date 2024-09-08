@@ -38,243 +38,130 @@ const getLevel = (item) => {
 };
 
 function Game() {
-  const [playerChoice, setPlayerChoice] = useState(null);
-  const [opponentChoice, setOpponentChoice] = useState(null);
+  const [player, setPlayer] = useState({
+    hp: 100,
+    gold: 0,
+    upgradePoints: 0,
+    choice: null,
+    upgrades: { rock: 1, paper: 1, scissors: 1 },
+  });
+
+  const [opponent, setOpponent] = useState(opponents[0]);
   const [result, setResult] = useState("");
-  const [currentOpponent, setCurrentOpponent] = useState(opponents[0]);
-  const [round, setRound] = useState(0);
   const [showUpgrade, setShowUpgrade] = useState(false);
-  const [playerUpgrades, setPlayerUpgrades] = useState({
-    rock: 1,
-    paper: 1,
-    scissors: 1,
-  });
-  const [opponentUpgrades, setOpponentUpgrades] = useState({
-    rock: 1,
-    paper: 1,
-    scissors: 1,
-  });
   const [showVictoryMessage, setShowVictoryMessage] = useState(false);
 
-  const clickSound = new Audio("/assets/sounds/click.wav");
-  const winSound = new Audio("/assets/sounds/win.wav");
-  const loseSound = new Audio("/assets/sounds/lose.mp3");
-  const tieSound = new Audio("/assets/sounds/tie.wav");
-
-  useEffect(() => {
-    if (currentOpponent.name === "The Sickle" && round > 7) {
-      setCurrentOpponent((prev) => ({
-        ...prev,
-        hp: prev.hp - 2,
-      }));
-    }
-  }, [round]);
-
-  const play = (choice) => {
-    clickSound.play();
-    const opponentChoices = choices.filter(
-      (choice) => choice.level <= opponentUpgrades[choice.name]
-    );
-    const opponent =
-      opponentChoices[Math.floor(Math.random() * opponentChoices.length)];
-    setPlayerChoice(choice);
-    setOpponentChoice(opponent);
-    determineWinner(choice.name, opponent.name);
-    setRound((prev) => prev + 1);
-  };
-
-  const determineWinner = (player, opponent) => {
-    const playerLevel = getLevel(player);
-    const opponentLevel = getLevel(opponent);
-
-    if (playerLevel.type === opponentLevel.type) {
-      if (playerLevel.level === opponentLevel.level) {
-        setResult("It's a tie! 🤝");
-        tieSound.play();
-        if (currentOpponent.name === "The Mom") {
-          setCurrentOpponent((prev) => ({
-            ...prev,
-            hp: prev.hp + 2,
-          }));
-        }
-      } else if (playerLevel.level > opponentLevel.level) {
-        setResult("You win! 🎉");
-        winSound.play();
-        setCurrentOpponent((prev) => ({
-          ...prev,
-          hp: prev.hp - 1,
-        }));
-        if (currentOpponent.hp <= 0) {
-          setShowUpgrade(true);
-          setShowVictoryMessage(true);
-          setTimeout(() => {
-            setShowVictoryMessage(false);
-            changeOpponent();
-          }, 2000);
-        }
-      } else {
-        setResult("You lose! 😢");
-        loseSound.play();
-      }
-    } else {
-      const winConditions = {
-        rock: "scissors",
-        paper: "rock",
-        scissors: "paper",
-      };
-
-      if (winConditions[playerLevel.type] === opponentLevel.type) {
-        if (playerLevel.level >= opponentLevel.level) {
-          setResult("You win! 🎉");
-          winSound.play();
-          setCurrentOpponent((prev) => ({
-            ...prev,
-            hp: prev.hp - 1,
-          }));
-          if (currentOpponent.hp <= 0) {
-            setShowUpgrade(true);
-            setShowVictoryMessage(true);
-            setTimeout(() => {
-              setShowVictoryMessage(false);
-              changeOpponent();
-            }, 2000);
-          }
-        } else {
-          setResult("It's a tie! 🤝");
-          tieSound.play();
-          if (currentOpponent.name === "The Mom") {
-            setCurrentOpponent((prev) => ({
-              ...prev,
-              hp: prev.hp + 2,
-            }));
-          }
-        }
-      } else if (winConditions[opponentLevel.type] === playerLevel.type) {
-        if (opponentLevel.level >= playerLevel.level) {
-          setResult("You lose! 😢");
-          loseSound.play();
-        } else {
-          setResult("It's a tie! 🤝");
-          tieSound.play();
-          if (currentOpponent.name === "The Mom") {
-            setCurrentOpponent((prev) => ({
-              ...prev,
-              hp: prev.hp + 2,
-            }));
-          }
-        }
-      } else {
-        setResult("You lose! 😢");
-        loseSound.play();
-      }
-    }
-  };
-
-  const handleUpgrade = (type) => {
-    setPlayerUpgrades((prev) => ({
-      ...prev,
-      [type]: prev[type] + 1,
-    }));
-    setShowUpgrade(false);
-  };
-
-  const changeOpponent = () => {
-    const nextOpponentIndex =
-      opponents.findIndex(
-        (opponent) => opponent.name === currentOpponent.name
-      ) + 1;
-    if (nextOpponentIndex < opponents.length) {
-      setCurrentOpponent(opponents[nextOpponentIndex]);
-    } else {
-      setCurrentOpponent(opponents[0]); // Loop back to the first opponent
-    }
-  };
-
-  const filteredChoices = choices.filter(
-    (choice) => choice.level <= playerUpgrades[choice.name]
-  );
-
   const handleWin = () => {
-    setResult("You win! 🎉");
-    winSound.play();
-    setCurrentOpponent((prev) => ({
-      ...prev,
-      hp: prev.hp - 1,
-    }));
-    if (currentOpponent.hp <= 0) {
-      setShowUpgrade(true);
-      setShowVictoryMessage(true);
-      setTimeout(() => {
-        setShowVictoryMessage(false);
-        changeOpponent();
-      }, 2000);
-    }
+    setResult("You Win!");
+    setShowVictoryMessage(true);
+    setTimeout(() => {
+      setShowVictoryMessage(false);
+      setNextOpponent();
+    }, 2000); // Hide the message after 2 seconds
   };
 
   const handleLose = () => {
-    setResult("You lose! 😢");
-    loseSound.play();
+    setResult("You Lose!");
   };
 
   const handleTie = () => {
-    setResult("It's a tie! 🤝");
-    tieSound.play();
-    if (currentOpponent.name === "The Mom") {
-      setCurrentOpponent((prev) => ({
-        ...prev,
-        hp: prev.hp + 2,
-      }));
+    setResult("It's a Tie!");
+  };
+
+  const setNextOpponent = () => {
+    const currentIndex = opponents.indexOf(opponent);
+    const nextIndex = (currentIndex + 1) % opponents.length;
+    setOpponent(opponents[nextIndex]);
+  };
+
+  const play = (playerChoice) => {
+    setPlayer((prevPlayer) => ({ ...prevPlayer, choice: playerChoice }));
+    const opponentChoice = choices[Math.floor(Math.random() * choices.length)];
+    setOpponent((prevOpponent) => ({
+      ...prevOpponent,
+      choice: opponentChoice,
+    }));
+
+    // Determine the result
+    const playerLevel = getLevel(playerChoice.name);
+    const opponentLevel = getLevel(opponentChoice.name);
+
+    if (playerLevel.type === opponentLevel.type) {
+      if (playerLevel.level > opponentLevel.level) {
+        handleWin();
+      } else if (playerLevel.level < opponentLevel.level) {
+        handleLose();
+      } else {
+        handleTie();
+      }
+    } else if (
+      (playerLevel.type === "rock" && opponentLevel.type === "scissors") ||
+      (playerLevel.type === "scissors" && opponentLevel.type === "paper") ||
+      (playerLevel.type === "paper" && opponentLevel.type === "rock")
+    ) {
+      handleWin();
+    } else {
+      handleLose();
     }
   };
 
   return (
-    <div className="game">
-      <DevTools onWin={handleWin} onLose={handleLose} onTie={handleTie} />
-      <div className="result-message">{result}</div>
-      <h1>Rock Paper Scissors</h1>
-      <div className="choices">
-        {filteredChoices.map((choice) => (
-          <button
-            key={choice.name}
-            onClick={() => play(choice)}
-            className="choice-button"
-          >
-            {choice.emoji} {choice.name}
-          </button>
-        ))}
+    <div className="game-container">
+      <div className="player-info">
+        <h2>Player</h2>
+        <p>HP: {player.hp}</p>
+        <p>Gold: {player.gold}</p>
+        <p>Upgrade Points: {player.upgradePoints}</p>
+        {/* Other player info */}
       </div>
-      {playerChoice && (
-        <div className="results">
-          <p>
-            You chose: {playerChoice.emoji} {playerChoice.name}
-          </p>
-          <p>
-            Opponent chose: {opponentChoice.emoji} {opponentChoice.name}
-          </p>
-          <p>{result}</p>
+      <div className="game">
+        <DevTools onWin={handleWin} onLose={handleLose} onTie={handleTie} />
+        <div className="result-message">{result}</div>
+        <h1>Rock Paper Scissors</h1>
+        <div className="choices">
+          {choices.map((choice) => (
+            <button
+              key={choice.name}
+              onClick={() => play(choice)}
+              className="choice-button"
+            >
+              {choice.emoji} {choice.name}
+            </button>
+          ))}
         </div>
-      )}
+        {player.choice && opponent.choice && (
+          <div className="results">
+            <p>
+              You chose: {player.choice.emoji} {player.choice.name}
+            </p>
+            <p>
+              Opponent chose: {opponent.choice.emoji} {opponent.choice.name}
+            </p>
+            <p>{result}</p>
+          </div>
+        )}
+      </div>
       <div className="opponent-info">
         <h2>
-          Current Opponent: {currentOpponent.emoji} {currentOpponent.name}
+          Current Opponent: {opponent.emoji} {opponent.name}
         </h2>
-        <p>HP: {currentOpponent.hp}</p>
-        <p>Gold: {currentOpponent.gold}</p>
-        <p>Upgrade Points: {currentOpponent.upgradePoints}</p>
-        {currentOpponent.special && <p>Special: {currentOpponent.special}</p>}
+        <p>HP: {opponent.hp}</p>
+        <p>Gold: {opponent.gold}</p>
+        <p>Upgrade Points: {opponent.upgradePoints}</p>
+        {opponent.special && <p>Special: {opponent.special}</p>}
       </div>
       {showUpgrade && (
         <div className="upgrade-modal">
           <h2>Level Upgrade!</h2>
           <p>Choose which class to upgrade:</p>
           <button onClick={() => handleUpgrade("rock")}>
-            Rock {upgrades.rock[playerUpgrades.rock - 1]}
+            Rock {upgrades.rock[player.upgrades.rock - 1]}
           </button>
           <button onClick={() => handleUpgrade("paper")}>
-            Paper {upgrades.paper[playerUpgrades.paper - 1]}
+            Paper {upgrades.paper[player.upgrades.paper - 1]}
           </button>
           <button onClick={() => handleUpgrade("scissors")}>
-            Scissors {upgrades.scissors[playerUpgrades.scissors - 1]}
+            Scissors {upgrades.scissors[player.upgrades.scissors - 1]}
           </button>
         </div>
       )}
